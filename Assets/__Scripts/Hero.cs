@@ -10,10 +10,10 @@ public class Hero : MonoBehaviour {
 	public float  	pitchMult=30;
 	[SerializeField]
 	private float	_shieldLevel=1;
-
 	public bool	_____________________;
 	public Bounds bounds;
-
+	public delegate void WeaponFireDelegate();
+	public WeaponFireDelegate fireDelegate;
 	void Awake(){
 		S = this;
 		bounds = Utils.CombineBoundsOfChildren (this.gameObject);
@@ -22,7 +22,7 @@ public class Hero : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+
 	}
 	
 	// Update is called once per frame
@@ -46,12 +46,15 @@ public class Hero : MonoBehaviour {
 		
 		// rotate the ship to make it feel more dynamic
 		transform.rotation =Quaternion.Euler(yAxis*pitchMult, xAxis*rollMult,0);
+		if (Input.GetAxis ("Jump") == 1 && fireDelegate != null) {
+			Debug.Log("Jump");
+			fireDelegate ();
+		}
 	}
 	public GameObject lastTriggerGo = null;
 	void OnTriggerEnter(Collider other) {
 		GameObject go = Utils.FindTaggedParent (other.gameObject);
 		if (go != null) {
-
 			if (go == lastTriggerGo){
 				return;
 			}

@@ -203,6 +203,16 @@ public class Utils : MonoBehaviour
 	public static GameObject FindTaggedParent(Transform t){
 		return(FindTaggedParent (t.gameObject));
 	}
+	static public Material[] GetAllMaterials(GameObject go){
+		List<Material> mats = new List<Material> ();
+		if (go.renderer != null) {
+			mats.Add (go.renderer.material);
+		}
+		foreach (Transform t in go.transform) {
+			mats.AddRange (GetAllMaterials (t.gameObject));
+		}
+		return(mats.ToArray ());
+	}
 }// End of Util Class
 
 

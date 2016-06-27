@@ -6,18 +6,33 @@ public class Enemy : MonoBehaviour {
 	public float fireRate = 0.3f;
 	public float health = 10;
 	public int score = 100;
+	public int showDamageForFrames = 2;
 	public bool ____________________;
+	public Color[] originalColors;
+	public Material[] materials;
+	public int remainingDamageFrames = 0;
 	public Bounds bounds;
 	public Vector3 boundsCenterOffset;
 
 	// Use this for initialization
 	void Awake () {
+		materials = Utils.GetAllMaterials (gameObject);
+		originalColors = new Color[materials.Length];
+		for (int i=0; i<materials.Length; i++) {
+			originalColors [i] = materials [i].color;
+		}
 		InvokeRepeating ("CheckOffScreen", 0f, 2f);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		Move ();
+		if (remainingDamageFrames > 0) {
+			remainingDamageFrames--;
+			if (remainingDamageFrames == 0) {
+				UnShowDamage ();
+			}
+		}
 	}
 	public virtual void Move(){
 		Vector3 tempPos = pos;
@@ -43,6 +58,36 @@ public class Enemy : MonoBehaviour {
 			if (off.y < 0) {
 				Destroy (this.gameObject);
 			}
+		}
+	}
+	void OnCollisionEnter(Collision coll){
+		GameObject other = coll.gameObject;
+		switch (other.tag) {
+		case "ProjectileHero":
+			Projectile p = other.GetComponent<Projectile> ();
+			bounds.center = transform.position + boundsCenterOffset;
+			if (bounds.extents == Vector3.zero || Utils.ScreenBoundsCheck (bounds, BoundsTest.offScreen) != Vector3.zero) {
+				Destroy (other);
+				break;
+			}
+			ShowDamage();
+			health -= Main.W_DEFS [p.type].damageOnHit;
+			if (health <= 0) {
+				Destroy (this.gameObject);
+			}
+			Destroy (other);
+			break;
+		}
+	}
+	void ShowDamage(){
+		foreach (Material m in materials) {
+			m.color = Color.red;
+		}
+		remainingDamageFrames = showDamageForFrames;
+	}
+	void UnShowDamage() {
+		for (int i=0; i<materials.Length; i++) {
+			materials [i].color = originalColors [i];
 		}
 	}
 }
