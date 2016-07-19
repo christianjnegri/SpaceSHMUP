@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour {
 	public float health = 10;
 	public int score = 100;
 	public int showDamageForFrames = 2;
+	public float powerUpDropChance = 1f;
 	public bool ____________________;
 	public Color[] originalColors;
 	public Material[] materials;
@@ -73,6 +74,7 @@ public class Enemy : MonoBehaviour {
 			ShowDamage();
 			health -= Main.W_DEFS [p.type].damageOnHit;
 			if (health <= 0) {
+				Main.S.ShipDestroyed(this);
 				Destroy (this.gameObject);
 			}
 			Destroy (other);
