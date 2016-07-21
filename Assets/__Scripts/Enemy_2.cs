@@ -47,7 +47,7 @@ public class Enemy_2 : Enemy {
 		// If u>1, then it has been longer than lifeTime since birthTime
 		if (u > 1) {
 			// This Enemy_2 has finished its life
-			Destroy( this.gameObject );
+			Destroy( this.gameObject );	
 			return;
 		}
 		

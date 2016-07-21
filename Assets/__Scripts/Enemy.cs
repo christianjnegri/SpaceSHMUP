@@ -4,10 +4,10 @@ using System.Collections;
 public class Enemy : MonoBehaviour {
 	public float speed = 10f;
 	public float fireRate = 0.3f;
-	public float health = 10;
+	public float health = 3;
 	public int score = 100;
 	public int showDamageForFrames = 2;
-	public float powerUpDropChance = 1f;
+	public float powerUpDropChance = .5f;
 	public bool ____________________;
 	public Color[] originalColors;
 	public Material[] materials;
@@ -57,6 +57,7 @@ public class Enemy : MonoBehaviour {
 		Vector3 off = Utils.ScreenBoundsCheck (bounds, BoundsTest.offScreen);
 		if (off != Vector3.zero) {
 			if (off.y < 0) {
+				Debug.Log("Enemy off camera");
 				Destroy (this.gameObject);
 			}
 		}

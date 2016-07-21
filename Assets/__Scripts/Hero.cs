@@ -9,15 +9,23 @@ public class Hero : MonoBehaviour {
 	public float	rollMult = -45;
 	public float  	pitchMult=30;
 	[SerializeField]
-	private float	_shieldLevel=1;
+	private float	_shieldLevel=0;
+	public Color[] originalColors;
 	public Weapon[]            weapons;
 	public bool	_____________________;
+	public Material[] materials;
 	public Bounds bounds;
 	public delegate void WeaponFireDelegate();
 	public WeaponFireDelegate fireDelegate;
 	void Awake(){
+		
 		S = this;
 		bounds = Utils.CombineBoundsOfChildren (this.gameObject);
+		materials = Utils.GetAllMaterials (gameObject);
+		originalColors = new Color[materials.Length];
+		for (int i=0; i<materials.Length; i++) {
+			originalColors [i] = materials [i].color;
+		}
 	}
 
 
@@ -63,7 +71,12 @@ public class Hero : MonoBehaviour {
 			lastTriggerGo = go;
 			if(go.tag == "Enemy"){
 				shieldLevel--;
+				speed=25;
+				for (int i=0; i<materials.Length; i++) {
+					materials [i].color = originalColors [i];
+				}
 				Destroy(go);
+				
 			} else if (go.tag == "PowerUp") {
 			// If the shield was triggerd by a PowerUp
 			AbsorbPowerUp(go);
@@ -82,7 +95,8 @@ public class Hero : MonoBehaviour {
 			_shieldLevel = Mathf.Min (value, 4);
 			if (value < 0) {
 				Destroy (this.gameObject);
-				Main.S.DelayedRestart(gameRestartDelay);
+	
+				Main.S.GameOver(gameRestartDelay);
 			}
 		}
 	}
@@ -92,7 +106,18 @@ public class Hero : MonoBehaviour {
 		case WeaponType.shield: // If it's the shield
 			shieldLevel++;
 			break;
+
+		case WeaponType.bomb:
+			Main.S.Bomb ();
+		break;
 			
+		case WeaponType.speed: //if it's speed
+			speed=50;
+			foreach (Material m in materials) {
+				m.color = Color.yellow;
+			}
+			break;
+		
 		default: // If it's any Weapon PowerUp
 			// Check the current weapon type
 			if (pu.type == weapons[0].type) {

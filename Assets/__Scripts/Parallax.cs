@@ -5,7 +5,7 @@ public class Parallax : MonoBehaviour {
 	
 	public GameObject       poi; // The player ship
 	public GameObject[]     panels; // The scrolling foregrounds
-	public float            scrollSpeed = -30f;
+	static public float            scrollSpeed = -2f;
 	// motionMult controls how much panels react to player movement
 	public float            motionMult = 0.25f;
 	
@@ -38,6 +38,19 @@ public class Parallax : MonoBehaviour {
 			panels[1].transform.position = new Vector3(tX, tY-panelHt, depth);
 		} else {
 			panels[1].transform.position = new Vector3(tX, tY+panelHt, depth);
+		}
+	}
+	public static void Slow(){
+		while(scrollSpeed < -2){
+			scrollSpeed = (scrollSpeed/2)*Time.deltaTime;
+		}
+	}
+	public static void Fast(){
+		while(scrollSpeed > -64){
+			scrollSpeed = (scrollSpeed*2)*Time.deltaTime;
+		}
+		while(scrollSpeed < -32){
+			scrollSpeed = (scrollSpeed-2)*Time.deltaTime;
 		}
 	}
 }
